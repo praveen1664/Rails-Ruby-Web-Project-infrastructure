@@ -1,0 +1,8 @@
+<% if gem_dependency_names.include?('pg') %>
+- name: installing pg dependencies
+  apt: name={{item}} state=present
+  with_items:
+    - libpq-dev
+    - libssl-dev
+    - postgresql-client
+<% end %>

@@ -1,0 +1,10 @@
+# this is for vagrant
+server_name: <%= vagrant_app_machine.vm_hostname %>
+database_host: <%= vagrant_db_machine.vm_hostname %>
+app_nodes:
+  - name: app
+    ip: <%= vagrant_app_machine.vm_ip %>
+app_env:
+  DATABASE_URL: "postgresql://{{database_host}}/{{app_deploy_name}}?pool=5"
+  RAILS_ENV: "production"
+  SECRET_KEY_BASE: "<%= SecureRandom.hex(64) %>"

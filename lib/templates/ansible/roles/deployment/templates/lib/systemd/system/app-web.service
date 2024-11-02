@@ -1,0 +1,18 @@
+[Unit]
+Description={{app_deploy_name}}RackupApp
+
+[Service]
+Type=simple
+User={{app_deploy_user}}
+WorkingDirectory={{app_deploy_path}}/current
+ExecStart=/bin/bash -lc 'bundle exec rackup -p {{app_port}} -o 0.0.0.0'
+Restart=always
+StandardInput=null
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n
+KillMode=process
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

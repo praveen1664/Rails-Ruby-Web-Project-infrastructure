@@ -1,0 +1,21 @@
+---
+- hosts: all
+  vars_files:
+    - group_vars/vm.yml
+  become: yes
+  roles:
+    - azavea.swapfile
+    - common
+- hosts: db
+  vars_files:
+    - group_vars/vm.yml
+  become: yes
+  roles:
+    - postgresql
+- hosts: app
+  vars_files:
+    - group_vars/vm.yml
+  become: yes
+  roles:
+    - app
+    - deployment

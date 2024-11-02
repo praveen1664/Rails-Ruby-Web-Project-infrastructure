@@ -1,0 +1,9 @@
+---
+- name: update apt cache
+  apt: update_cache=yes cache_valid_time=86400
+
+#- name: Set up authorized_keys for the remote user
+#  authorized_key: user="{{ ansible_ssh_user }}" key="{{ item }}"
+#  become: no
+#  with_file:
+#    - public_keys/grant2.pub

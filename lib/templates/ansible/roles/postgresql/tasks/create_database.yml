@@ -1,0 +1,9 @@
+- name: create database
+  postgresql_db: name={{app_deploy_name}} encoding='UTF-8'
+  become: yes
+  become_user: postgres
+
+- name: create pg user
+  postgresql_user: name={{app_deploy_user}} role_attr_flags=CREATEDB
+  become: yes
+  become_user: postgres

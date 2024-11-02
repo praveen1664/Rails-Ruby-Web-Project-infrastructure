@@ -1,0 +1,23 @@
+- stat: path=/home/{{app_deploy_user}}/.env
+  register: env_file
+
+- name: create .env
+  file: path=/home/{{app_deploy_user}}/.env state=touch
+  when: not env_file.stat.exists
+
+- name: set owner and group for .env
+  file: path=/home/{{app_deploy_user}}/.env owner={{app_deploy_user}} group={{app_deploy_user}} mode=0644
+
+- name: set app enviroment variables
+  lineinfile: dest=/home/{{app_deploy_user}}/.env regexp="{{ item.key }}=" line="export {{ item.key }}=\"{{ item.value }}\""
+  with_dict: "{{app_env}}"
+
+- name: Include application environment variables in the bashrc
+  blockinfile:
+    dest: /home/{{app_deploy_user}}/.bashrc
+    insertbefore: "BOF"
+    state: present
+    block: |
+      if [ -f "$HOME/.env" ] ; then
+        . "$HOME/.env"
+      fi

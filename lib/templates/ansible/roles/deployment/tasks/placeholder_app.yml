@@ -1,0 +1,23 @@
+- name: create placeholder_app directory
+  file: path="{{app_deploy_path}}/placeholder_app" owner={{app_deploy_user}} group={{app_deploy_user}} state=directory mode=0755
+
+- name: copy placeholder_app config.ru
+  copy: src=_deploy_home_/placeholder_app/config.ru dest="{{app_deploy_path}}/placeholder_app/config.ru" owner={{app_deploy_user}} group={{app_deploy_user}}
+
+- name: copy placeholder_app Gemfile
+  copy: src=_deploy_home_/placeholder_app/Gemfile dest="{{app_deploy_path}}/placeholder_app/Gemfile" owner={{app_deploy_user}} group={{app_deploy_user}}
+
+- name: bundle install placeholder app
+  shell: /bin/bash -l -c "bundle install --path vendor/bundle --retry=2"
+  become: yes
+  become_user: "{{app_deploy_user}}"
+  args:
+    chdir: "{{app_deploy_path}}/placeholder_app"
+    creates: "{{app_deploy_path}}/placeholder_app/vendor/bundle"
+
+- stat: path=/home/{{app_deploy_name}}/current
+  register: app_current_dir_link
+
+- name: create symlink if does not current exists
+  file: src="{{app_deploy_path}}/placeholder_app" dest="{{app_deploy_path}}/current" owner={{app_deploy_user}} group={{app_deploy_user}} state=link
+  when: not app_current_dir_link.stat.exists

@@ -1,0 +1,27 @@
+- name: add app-web.service
+  template: src=lib/systemd/system/app-web.service dest="/lib/systemd/system/{{app_deploy_name}}-web.service" owner=root group=root mode=0644
+
+- name: Ensure app service is running
+  systemd: name="{{app_deploy_name}}-web" state=started enabled=yes
+
+- name: wait for app to be running
+  wait_for: port={{app_port}} delay=5
+
+- name: create app_deploy_path bin
+  file: path="{{app_deploy_path}}/bin" owner={{app_deploy_user}} group={{app_deploy_user}} state=directory mode=0755
+
+- name: add app_deploy_path script to restart app-web.service
+  template:
+    src: _deploy_home_/bin/restart-app.sh
+    dest: "{{app_deploy_path}}/bin/restart-app.sh"
+    owner: root
+    group: "{{app_deploy_user}}"
+    mode: 0755
+
+- name: add sudo access script to restart app-web.service
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    insertafter: EOF
+    regexp: '^%{{app_deploy_user}}'
+    line: '%{{app_deploy_user}} ALL=(root) NOPASSWD: {{app_deploy_path}}/bin/restart-app.sh'

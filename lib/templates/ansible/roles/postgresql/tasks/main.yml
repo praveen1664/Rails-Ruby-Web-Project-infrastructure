@@ -1,0 +1,3 @@
+- include: install.yml
+- include: create_database.yml
+- include: setup_backups.yml

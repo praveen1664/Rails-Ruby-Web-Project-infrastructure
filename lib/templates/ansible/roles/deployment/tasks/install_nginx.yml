@@ -1,0 +1,23 @@
+- name: installing nginx
+  apt: name={{item}} state=present
+  with_items:
+    - nginx
+    - nginx-extras
+
+- name: add passenger conf to ngnix sites-available
+  template: src=etc/nginx/sites-available/_passenger_site.conf dest=/etc/nginx/sites-available/{{app_deploy_name}}.conf owner=root group=root mode=0644
+  notify: nginx reload
+
+- name: link _passenger_site.conf to ngnix sites-enabled
+  file: src=/etc/nginx/sites-available/{{app_deploy_name}}.conf dest=/etc/nginx/sites-enabled/{{app_deploy_name}}.conf owner=root group=root state=link
+
+- name: enable gzip in nginx
+  replace: dest=/etc/nginx/nginx.conf regexp="# {{item}}" replace={{item}}
+  notify: nginx reload
+  with_items:
+    - gzip_vary
+    - gzip_proxied
+    - gzip_comp_level
+    - gzip_buffers
+    - gzip_http_version
+    - gzip_types

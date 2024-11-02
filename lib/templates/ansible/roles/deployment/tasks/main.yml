@@ -1,0 +1,6 @@
+- include: create_deploy_user.yml
+- include: setup-bundler.yml
+- include: set_enviroment_variables.yml
+- include: placeholder_app.yml
+- include: install_service.yml
+- include: iinstall_nginx.yml

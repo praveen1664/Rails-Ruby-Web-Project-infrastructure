@@ -1,0 +1,12 @@
+- name: Install system ruby
+  apt: name={{item}} state=present
+  with_items:
+    - "ruby"
+    - "ruby-dev"
+
+- name: installing basic gem buidling dependencies
+  apt: name={{item}} state=present
+  with_items:
+    - build-essential
+    - g++
+    - git

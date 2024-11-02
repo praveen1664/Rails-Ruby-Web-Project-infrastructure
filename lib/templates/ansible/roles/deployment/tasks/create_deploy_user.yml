@@ -1,0 +1,17 @@
+- name: Ensure the deploy account is present
+  user: name={{app_deploy_user}} comment="The {{app_deploy_name}} deploy user" home="/home/{{app_deploy_user}}" createhome=yes shell="/bin/bash" state=present
+
+- name: Deploy ssh directory is present
+  file: path=/home/{{app_deploy_user}}/.ssh owner={{app_deploy_user}} group={{app_deploy_user}} mode=0700 state=directory
+
+- name: Set deploy user access
+  copy: src=_deploy_home_/.ssh/authorized_keys dest=/home/{{app_deploy_user}}/.ssh/authorized_keys owner={{app_deploy_user}} group={{app_deploy_user}} mode=0600
+
+- name: Creates directory shared/config directory
+  file: path={{app_deploy_path}}/shared/config state=directory owner={{app_deploy_user}} group={{app_deploy_user}}
+
+- name: Creates directory shared/log directory
+  file: path={{app_deploy_path}}/shared/log state=directory owner={{app_deploy_user}} group={{app_deploy_user}}
+
+- name: add rails log logrotation for all rails log files
+  template: src=etc/logrotate.d/_logrotate_conf dest=/etc/logrotate.d/{{app_deploy_name}} owner=root group=root mode=0644

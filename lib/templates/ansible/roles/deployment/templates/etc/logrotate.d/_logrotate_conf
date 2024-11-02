@@ -1,0 +1,9 @@
+{{app_deploy_path}}/current/log/*.log {
+    weekly
+    missingok
+    rotate 52
+    compress
+    delaycompress
+    notifempty
+    copytruncate
+}
